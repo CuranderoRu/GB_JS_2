@@ -1,0 +1,35 @@
+// main: style.less
+
+@media (max-width: @mediaPortMax) {
+    .footer {
+        min-height: 111px;
+    }
+
+    .footer-misc {
+        display: none;
+    }
+
+    .footer-copyright {
+        flex-direction: column;
+
+        &-wrp {
+            margin: 0 auto 10px auto;
+        }
+
+        &-wrp:last-child {
+            margin: 0 auto 20px auto;
+        }
+
+        &-txt {
+            padding: 0 6px 0 6px;
+            &:first-child {
+                padding: 0 6px 0 0;
+            }
+
+            &:last-child {
+                padding: 0 0 0 6px;
+                border-right: none;
+            }
+        }
+    }
+}
