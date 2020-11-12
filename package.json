@@ -1,0 +1,23 @@
+{
+  "name": "gb_js_2",
+  "version": "1.0.0",
+  "description": "JS2 study",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CuranderoRu/GB_JS_2.git"
+  },
+  "keywords": [
+    "JavaScript",
+    "NodeJS"
+  ],
+  "author": "Sergei Ogarkov",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CuranderoRu/GB_JS_2/issues"
+  },
+  "homepage": "https://github.com/CuranderoRu/GB_JS_2#readme"
+}
