@@ -133,11 +133,15 @@ function showSectionsList(arr, sectionId) {
 function cartManagementClickHandler(e) {
     e.preventDefault();
     if (e.target.id === "aclearCart") {
-        app.cart.clearCart();
+        app.cart.clear();
         document.getElementById("cartManagementMenu").remove();
         recalcCostLabel();
     } else if (e.target.id === "aviewCartItems") {
-        console.log(e);
+        let mainSections = document.getElementsByClassName('main-section');
+        for (let i = 0; i < mainSections.length; i++) {
+            mainSections[i].innerHTML = "";
+        }
+        app.cart.render();
     }
 }
 

@@ -11,7 +11,7 @@ class App {
             if(this.cart.version !== _cart.version){
                 this.initLocalStorage();
             }else{
-                this.cart.items = _cart._items;
+//                this.cart.loadItems(_cart._items); //Какого х здесь теряется контекст this????
             }
         }
         this.cart.productsArray = this.productsArray;
@@ -116,10 +116,10 @@ class Container{
 class Cart{
     _version = "1.0";
     _cartSum = 0;
+    _items = [];
 
     constructor (_productsArray = []) {
         this.className = "cart";
-        this._items = [];
         this._productsArray = _productsArray;
     };
 
@@ -140,6 +140,16 @@ class Cart{
     }
 
     set items(_items){
+        if(!_items instanceof Array){
+            return;
+        }
+        this._items = [];
+        _items.forEach(function(item, index, array) {
+            this._items.push(new CartProduct(item, item._q))
+        });
+    }
+
+    loadItems(_items){
         if(!_items instanceof Array){
             return;
         }
@@ -206,6 +216,13 @@ class Cart{
     getProductById(productId) {
         return this._productsArray.find(element => element.id === productId);
     };
+
+    render() {
+        let divCart = document.getElementsByClassName(this.className)[0];
+        this._items.forEach(function(item, index, array) {
+            divCart.append(item.render());
+        });
+    }
 
 }
 
@@ -319,6 +336,35 @@ class CartProduct extends Product{
     set q(_q){
         this._q = _q;
         this._sum = +(_q * product.price).toFixed(2);
+    }
+
+    render () {
+        let div = document.createElement('div');
+        div.classList.add(this.className);
+        let spanName = document.createElement('span');
+        spanName.textContent = this.title;
+        let spanQ = document.createElement('span');
+        spanQ.textContent = ": " + this._q;
+        let spanDecoration = document.createElement('span');
+        spanDecoration.textContent = ' x ';
+        let spanPrice = document.createElement('span');
+        spanPrice.textContent = this.price;
+        let spanDecoration2 = document.createElement('span');
+        spanDecoration2.textContent = ' = ';
+        let spanSum = document.createElement('span');
+        spanSum.textContent = this.sum;
+        let spanDecoration3 = document.createElement('span');
+        spanDecoration3.textContent = " " + this.currency;
+
+        div.append(spanName);
+        div.append(spanQ);
+        div.append(spanDecoration);
+        div.append(spanPrice);
+        div.append(spanDecoration2);
+        div.append(spanSum);
+        div.append(spanDecoration3);
+
+        return div;
     }
 
 }
