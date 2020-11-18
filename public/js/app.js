@@ -1,24 +1,35 @@
 'use strict';
 class App {
-    productsArray = this.fetchProducts();
+    productsArray = [];
     cart = new Cart();
+
     constructor(_params) {
         this.name = "app";
         if (localStorage['cart'] === undefined) {
             this.initLocalStorage();
         } else {
             let _cart = JSON.parse(localStorage.cart);
-            if(this.cart.version !== _cart.version){
+            if (this.cart.version !== _cart.version) {
                 this.initLocalStorage();
-            }else{
-//                this.cart.loadItems(_cart._items); //Какого х здесь теряется контекст this????
+            } else {
+                //                this.cart.loadItems(_cart._items); //Какого х здесь теряется контекст this????
             }
         }
         this.smallImagePath = _params.smallImagePath;
         this.bigImagePath = _params.bigImagePath;
+        // productsArray = this.fetchProducts();
+        let prom = this.fetchProducts();
+        prom
+            .then(() => {
+                this.cart.productsArray = this.productsArray;
+            })
+            .catch(() => {
+                this.cart.productsArray = [];
+            });
+
     }
 
-    initLocalStorage(){
+    initLocalStorage() {
         localStorage.setItem('cart', JSON.stringify(this.cart.storage()));
     }
     getPriceById(productId) {
@@ -35,68 +46,22 @@ class App {
     };
 
     fetchProducts() {
-        return [
-            {
-                id: "000001",
-                imgsrc: "Arduino%20Uno.png",
-                title: "Arduino Uno",
-                currency: "₽",
-                price: 499.75,
-                category: "Arduino",
-        },
-            {
-                id: "000002",
-                imgsrc: "arduino-nano-atmega328.png",
-                title: "Arduino Nano",
-                currency: "₽",
-                price: 399.96,
-                category: "Arduino",
-        },
-            {
-                id: "000003",
-                imgsrc: "esp32.png",
-                title: "ESP32",
-                currency: "₽",
-                price: 599.93,
-                category: "ESP",
-        },
-            {
-                id: "000004",
-                imgsrc: "esp8266%20NodeMCU.png",
-                title: "ESP8266 NodeMCU v3",
-                currency: "₽",
-                price: 299.97,
-                category: "ESP",
-        },
-            {
-                id: "000005",
-                imgsrc: "raspberry_pi_3_b.png",
-                title: "Raspberry Pi 3b",
-                currency: "₽",
-                price: 2836.24,
-                category: "Raspberry",
-        },
-            {
-                id: "000006",
-                imgsrc: "raspberry_pi_zero.jpg",
-                title: "Raspberry Pi zero",
-                currency: "₽",
-                price: 1715.44,
-                category: "Raspberry",
-        },
-            {
-                id: "000007",
-                imgsrc: "stm32.jpg",
-                title: "STM 32",
-                currency: "₽",
-                price: 815.26,
-                category: "STM",
-        },
-    ];
+        const result = fetch('/js/database.json');
+        return result
+            .then(res => {
+                return res.json();
+            })
+            .then(data => {
+                this.productsArray = data.data;
+            })
+            .catch(err => {
+                console.warn('Check your network connection', err);
+            });
     }
+
 }
 
-class Container{
+class Container {
     constructor(_id, _className) {
         this._id = _id;
         this.className = _className;
@@ -107,39 +72,39 @@ class Container{
         div.classList.add(this.className);
         return div;
     }
-    get id(){
+    get id() {
         return this._id;
     }
 }
 
-class Cart{
+class Cart {
     _version = "1.0";
     _cartSum = 0;
     _items = [];
 
-    constructor (_productsArray = []) {
+    constructor(_productsArray = []) {
         this.className = "cart";
         this._productsArray = _productsArray;
     };
 
-    get version(){
+    get version() {
         return this._version;
     }
 
-    get productsArray(){
+    get productsArray() {
         return this._productsArray;
     }
 
-    set productsArray(_productsArray){
+    set productsArray(_productsArray) {
         this._productsArray = _productsArray;
     }
 
-    get items(){
+    get items() {
         return this._items;
     }
 
-    set items(_items){
-        if(!_items instanceof Array){
+    set items(_items) {
+        if (!_items instanceof Array) {
             return;
         }
         this._items = [];
@@ -148,8 +113,8 @@ class Cart{
         });
     }
 
-    loadItems(_items){
-        if(!_items instanceof Array){
+    loadItems(_items) {
+        if (!_items instanceof Array) {
             return;
         }
         this._items = [];
@@ -158,7 +123,35 @@ class Cart{
         });
     }
 
-    add (productId, _q = 1) {
+    addWithPromise(productId, _q = 1) {
+
+        return new Promise((resolve, reject) => {
+            let added = false;
+            let cartProduct = this._items.find(element => element.id === productId);
+            if (cartProduct !== undefined) {
+                cartProduct.q = cartProduct.q + _q;
+                added = true;
+            }
+            if (!added) {
+                let product = this.getProductById(productId);
+                console.log();
+                if (product !== undefined) {
+                    this._items.push(new CartProduct(product, 1));
+                    added = true;
+                    localStorage.setItem('cart', JSON.stringify(this.storage()));
+                    this.total();
+                }
+            }
+            if (added) {
+                resolve();
+            } else {
+                reject();
+            }
+        });
+
+    }
+
+    add(productId, _q = 1) {
         let added = false;
         let cartProduct = this._items.find(element => element.id === productId);
         if (cartProduct !== undefined) {
@@ -171,30 +164,30 @@ class Cart{
             if (product !== undefined) {
                 this._items.push(new CartProduct(product, 1));
                 added = true;
-            localStorage.setItem('cart', JSON.stringify(this.storage()));
-            this.total();
+                localStorage.setItem('cart', JSON.stringify(this.storage()));
+                this.total();
             }
         }
         return added;
     }
 
-    storage () {
-        return {version: this.version, _items: this._items};
+    storage() {
+        return { version: this.version, _items: this._items };
     }
 
     remove(productId, _q = 0) {
         let productIndex = this._items.findIndex(element => element.id === productId);
         if (productIndex >= 0) {
-            if(_q = 0 || _q >= this._items[productIndex].q){
+            if (_q = 0 || _q >= this._items[productIndex].q) {
                 this._items.splice(productIndex, 1);
-            }else{
+            } else {
                 this._items[productIndex].q -= _q;
             }
         }
         this.total();
     }
 
-    clear () {
+    clear() {
         this._items = [];
         this._cartSum = 0;
         localStorage.setItem('cart', JSON.stringify(this._items));
@@ -208,7 +201,7 @@ class Cart{
         this._cartSum = this._cartSum.toFixed(2);
     };
 
-    get cartSum (){
+    get cartSum() {
         return this._cartSum;
     }
 
@@ -278,7 +271,7 @@ class MenuItem extends Container {
     }
 }
 
-class Product extends Container{
+class Product extends Container {
     constructor(_id, _class, _imgsrc, _title, _currency, _price) {
         super(_id, _class);
         this.imgsrc = _imgsrc;
@@ -316,7 +309,7 @@ class Product extends Container{
     }
 }
 
-class CartProduct extends Product{
+class CartProduct extends Product {
     _q = 0;
     constructor(product, _q) {
         super(product.id, "cart-item", product.imgsrc, product.title, product.currency, product.price);
@@ -324,20 +317,20 @@ class CartProduct extends Product{
         this._sum = +(_q * product.price).toFixed(2);
     }
 
-    get sum (){
+    get sum() {
         return this._sum;
     }
 
-    get q(){
+    get q() {
         return this._q;
     }
 
-    set q(_q){
+    set q(_q) {
         this._q = _q;
         this._sum = +(_q * product.price).toFixed(2);
     }
 
-    render () {
+    render() {
         let div = document.createElement('div');
         div.classList.add(this.className);
         let spanName = document.createElement('span');

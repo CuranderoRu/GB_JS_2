@@ -15,21 +15,23 @@ function recalcCostLabel() {
 function createCartMenu() {
     if (!document.getElementById("cartManagementMenu")) {
         let btn = document.getElementsByClassName("page-header-cart")[0];
-        let menu = new Menu("cartManagementMenu", "page-header-cart-actions",
-                                [
-                                    {item: new MenuItem("viewCartItems", "#", null, "page-header-nav-item-link", "View items", null ,cartManagementClickHandler)},
-                                    {item: new MenuItem("clearCart", "#", null, "page-header-nav-item-link", "Clear cart", null ,cartManagementClickHandler)},
-                                ]
-                            );
+        let menu = new Menu("cartManagementMenu", "page-header-cart-actions", [
+            { item: new MenuItem("viewCartItems", "#", null, "page-header-nav-item-link", "View items", null, cartManagementClickHandler) },
+            { item: new MenuItem("clearCart", "#", null, "page-header-nav-item-link", "Clear cart", null, cartManagementClickHandler) },
+        ]);
         btn.append(menu.render());
     }
 };
 
 function addToCart(productId) {
-    if (app.cart.add(productId)) {
-        recalcCostLabel();
-        createCartMenu();
-    }
+    app.cart.addWithPromise(productId)
+        .then(() => {
+            recalcCostLabel();
+            createCartMenu();
+        })
+        .catch(() => {
+            console.log('Could not add good to cart')
+        });
 }
 
 function buttonBuyHandler(e) {
@@ -41,12 +43,10 @@ function buttonBuyHandler(e) {
 }
 
 function getMenuArr() {
-    return [
-        {
+    return [{
             href: "#",
             label: "Controllers",
-            submenu: [
-                {
+            submenu: [{
                     href: "#",
                     label: "ESP",
                     category: "ESP",
@@ -71,8 +71,7 @@ function getMenuArr() {
         {
             href: "#",
             label: "Periferals",
-            submenu: [
-                {
+            submenu: [{
                     href: "#",
                     label: "Thermosensors",
                 },
@@ -111,7 +110,7 @@ function createMenu() {
             let submenuArr = [];
             for (let j = 0; j < menuArr[i].submenu.length; j++) {
                 submenuArr.push({
-                    item: new MenuItem("menuCategory"+menuArr[i].submenu[j].category, menuArr[i].submenu[j].href, "page-header-nav-item-submenu-item", "page-header-nav-item-link", menuArr[i].submenu[j].label)
+                    item: new MenuItem("menuCategory" + menuArr[i].submenu[j].category, menuArr[i].submenu[j].href, "page-header-nav-item-submenu-item", "page-header-nav-item-link", menuArr[i].submenu[j].label)
                 });
             }
             submenu = new Menu("nav-menu-submenu-" + i, "page-header-nav-item-submenu", submenuArr);
