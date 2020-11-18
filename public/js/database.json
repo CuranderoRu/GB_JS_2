@@ -1,0 +1,59 @@
+{
+    "data": [{
+            "id": "000001",
+            "imgsrc": "Arduino%20Uno.png",
+            "title": "Arduino Uno",
+            "currency": "₽",
+            "price": 499.75,
+            "category": "Arduino"
+        },
+        {
+            "id": "000002",
+            "imgsrc": "arduino-nano-atmega328.png",
+            "title": "Arduino Nano",
+            "currency": "₽",
+            "price": 399.96,
+            "category": "Arduino"
+        },
+        {
+            "id": "000003",
+            "imgsrc": "esp32.png",
+            "title": "ESP32",
+            "currency": "₽",
+            "price": 599.93,
+            "category": "ESP"
+        },
+        {
+            "id": "000004",
+            "imgsrc": "esp8266%20NodeMCU.png",
+            "title": "ESP8266 NodeMCU v3",
+            "currency": "₽",
+            "price": 299.97,
+            "category": "ESP"
+        },
+        {
+            "id": "000005",
+            "imgsrc": "raspberry_pi_3_b.png",
+            "title": "Raspberry Pi 3b",
+            "currency": "₽",
+            "price": 2836.24,
+            "category": "Raspberry"
+        },
+        {
+            "id": "000006",
+            "imgsrc": "raspberry_pi_zero.jpg",
+            "title": "Raspberry Pi zero",
+            "currency": "₽",
+            "price": 1715.44,
+            "category": "Raspberry"
+        },
+        {
+            "id": "000007",
+            "imgsrc": "stm32.jpg",
+            "title": "STM 32",
+            "currency": "₽",
+            "price": 815.26,
+            "category": "STM"
+        }
+    ]
+}
