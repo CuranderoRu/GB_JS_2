@@ -14,7 +14,6 @@ class App {
 //                this.cart.loadItems(_cart._items); //Какого х здесь теряется контекст this????
             }
         }
-        this.cart.productsArray = this.productsArray;
         this.smallImagePath = _params.smallImagePath;
         this.bigImagePath = _params.bigImagePath;
     }
