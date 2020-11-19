@@ -140,13 +140,6 @@ function createMenu() {
     nav.append(menu.render());
 }
 
-function showSectionsList(arr, sectionId) {
-    let div = document.getElementById(sectionId);
-    for (let i = 0; i < arr.length; i++) {
-        div.append(new Product(arr[i].id, "product-item", app.smallImagePath + arr[i].imgsrc, arr[i].title, arr[i].currency, arr[i].price).render());
-    }
-}
-
 function cartManagementClickHandler(e) {
     e.preventDefault();
     if (e.target.id === "aclearCart") {
