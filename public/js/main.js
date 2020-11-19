@@ -5,23 +5,23 @@ const appParams = {
     bigImagePath: "./img/big/",
 };
 
-const app = new App(appParams);
+let app;
 
 function recalcCostLabel() {
     let cartCostLabel = document.getElementById("cart-cost");
     cartCostLabel.innerHTML = "&#8381; " + app.cart._cartSum;
 }
 
-function createCartMenu() {
-    if (!document.getElementById("cartManagementMenu")) {
-        let btn = document.getElementsByClassName("page-header-cart")[0];
-        let menu = new Menu("cartManagementMenu", "page-header-cart-actions", [
-            { item: new MenuItem("viewCartItems", "#", null, "page-header-nav-item-link", "View items", null, cartManagementClickHandler) },
-            { item: new MenuItem("clearCart", "#", null, "page-header-nav-item-link", "Clear cart", null, cartManagementClickHandler) },
-        ]);
-        btn.append(menu.render());
-    }
-};
+// function createCartMenu() {
+//     if (!document.getElementById("cartManagementMenu")) {
+//         let btn = document.getElementsByClassName("page-header-cart")[0];
+//         let menu = new Menu("cartManagementMenu", "page-header-cart-actions", [
+//             { item: new MenuItem("viewCartItems", "#", null, "page-header-nav-item-link", "View items", null, cartManagementClickHandler) },
+//             { item: new MenuItem("clearCart", "#", null, "page-header-nav-item-link", "Clear cart", null, cartManagementClickHandler) },
+//         ]);
+//         btn.append(menu.render());
+//     }
+// };
 
 function cartChangeHandler(e) {
     e.preventDefault();
@@ -31,7 +31,6 @@ function cartChangeHandler(e) {
             app.cart.add(eIdArray[1])
                 .then(() => {
                     recalcCostLabel();
-                    createCartMenu();
                 })
                 .catch(() => {
                     console.log('Could not add good to cart')
@@ -41,7 +40,6 @@ function cartChangeHandler(e) {
             app.cart.remove(eIdArray[1], 1)
                 .then(() => {
                     recalcCostLabel();
-                    createCartMenu();
                 })
                 .catch(() => {
                     console.log('Could not remove good from cart')
@@ -52,7 +50,6 @@ function cartChangeHandler(e) {
             app.cart.remove(eIdArray[1])
                 .then(() => {
                     recalcCostLabel();
-                    createCartMenu();
                 })
                 .catch(() => {
                     console.log('Could not remove good from cart')
@@ -176,11 +173,9 @@ function reloadPage(e) {
 }
 
 function init() {
+    app = new App(appParams);
     createMenu();
-    showSectionsList(app.getLatestProductsArray(), "latestList");
-    showSectionsList(app.getPopularProductsArray(), "popularList");
     recalcCostLabel();
-    createCartMenu();
     let logo = document.querySelector('.page-header-logo');
     logo.addEventListener('click', reloadPage);
 

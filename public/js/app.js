@@ -22,6 +22,8 @@ class App {
         prom
             .then(() => {
                 this.cart.productsArray = this.productsArray;
+                this.fillProducts("latestList");
+                this.fillProducts("popularList");
             })
             .catch(() => {
                 this.cart.productsArray = [];
@@ -34,6 +36,18 @@ class App {
     }
     getPriceById(productId) {
         return this.productsArray.filter(elem => elem.id === productId)[0].price;
+    };
+    fillProducts(sectionId) {
+        let arr;
+        if(sectionId==='latestList'){
+            arr = this.getLatestProductsArray();
+        }else {
+            arr = this.getPopularProductsArray();
+        }
+        let div = document.getElementById(sectionId);
+        for (let i = 0; i < arr.length; i++) {
+            div.append(new Product(arr[i].id, "product-item", this.smallImagePath + arr[i].imgsrc, arr[i].title, arr[i].currency, arr[i].price).render());
+        }
     };
     getLatestProductsArray() {
         return this.productsArray.filter((element, index) => index < 3);
@@ -85,6 +99,7 @@ class Cart {
     constructor(_productsArray = []) {
         this.className = "cart";
         this._productsArray = _productsArray;
+        this.init();
     };
 
     get version() {
@@ -121,6 +136,17 @@ class Cart {
         _items.forEach(function(item, index, array) {
             this._items.push(new CartProduct(item, item._q))
         });
+    }
+
+    init(){
+        if (!document.getElementById("cartManagementMenu")) {
+            let btn = document.getElementsByClassName("page-header-cart")[0];
+            let menu = new Menu("cartManagementMenu", "page-header-cart-actions", [
+                { item: new MenuItem("viewCartItems", "#", null, "page-header-nav-item-link", "View items", null, cartManagementClickHandler) },
+                { item: new MenuItem("clearCart", "#", null, "page-header-nav-item-link", "Clear cart", null, cartManagementClickHandler) },
+            ]);
+            btn.append(menu.render());
+        }
     }
 
     add(productId, _q = 1) {
