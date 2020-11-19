@@ -23,22 +23,43 @@ function createCartMenu() {
     }
 };
 
-function addToCart(productId) {
-    app.cart.addWithPromise(productId)
-        .then(() => {
-            recalcCostLabel();
-            createCartMenu();
-        })
-        .catch(() => {
-            console.log('Could not add good to cart')
-        });
-}
-
-function buttonBuyHandler(e) {
+function cartChangeHandler(e) {
     e.preventDefault();
     let eIdArray = e.target.id.split('-');
-    if (eIdArray[0] === "buybutton") {
-        addToCart(eIdArray[1]);
+    switch (eIdArray[0]) {
+        case 'buybutton':
+            app.cart.add(eIdArray[1])
+                .then(() => {
+                    recalcCostLabel();
+                    createCartMenu();
+                })
+                .catch(() => {
+                    console.log('Could not add good to cart')
+                });
+            break;
+        case 'remove':
+            app.cart.remove(eIdArray[1], 1)
+                .then(() => {
+                    recalcCostLabel();
+                    createCartMenu();
+                })
+                .catch(() => {
+                    console.log('Could not remove good from cart')
+                });
+
+            break;
+        case 'dropbutton':
+            app.cart.remove(eIdArray[1])
+                .then(() => {
+                    recalcCostLabel();
+                    createCartMenu();
+                })
+                .catch(() => {
+                    console.log('Could not remove good from cart')
+                });
+            break;
+        default:
+            console.log('Unsupported call ', eIdArray[0]);
     }
 }
 
@@ -138,11 +159,20 @@ function cartManagementClickHandler(e) {
     } else if (e.target.id === "aviewCartItems") {
         let mainSections = document.getElementsByClassName('main-section');
         for (let i = 0; i < mainSections.length; i++) {
-            mainSections[i].innerHTML = "";
+            mainSections[i].classList.toggle('invisible');
         }
-        document.getElementsByClassName('cart')[0].innerHTML = "";
+        document.querySelector('.cart').classList.remove('invisible');
         app.cart.render();
     }
+}
+
+function reloadPage(e) {
+    let mainSections = document.getElementsByClassName('main-section');
+    for (let i = 0; i < mainSections.length; i++) {
+        mainSections[i].classList.remove('invisible');
+    }
+    let cart = document.querySelector('.cart');
+    cart.classList.add('invisible');
 }
 
 function init() {
@@ -151,4 +181,7 @@ function init() {
     showSectionsList(app.getPopularProductsArray(), "popularList");
     recalcCostLabel();
     createCartMenu();
+    let logo = document.querySelector('.page-header-logo');
+    logo.addEventListener('click', reloadPage);
+
 }

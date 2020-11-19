@@ -123,13 +123,14 @@ class Cart {
         });
     }
 
-    addWithPromise(productId, _q = 1) {
+    add(productId, _q = 1) {
 
         return new Promise((resolve, reject) => {
             let added = false;
             let cartProduct = this._items.find(element => element.id === productId);
             if (cartProduct !== undefined) {
                 cartProduct.q = cartProduct.q + _q;
+                cartProduct.render(true);
                 added = true;
             }
             if (!added) {
@@ -151,45 +152,39 @@ class Cart {
 
     }
 
-    add(productId, _q = 1) {
-        let added = false;
-        let cartProduct = this._items.find(element => element.id === productId);
-        if (cartProduct !== undefined) {
-            cartProduct.q = cartProduct.q + _q;
-            added = true;
-        }
-        if (!added) {
-            let product = this.getProductById(productId);
-            console.log();
-            if (product !== undefined) {
-                this._items.push(new CartProduct(product, 1));
-                added = true;
-                localStorage.setItem('cart', JSON.stringify(this.storage()));
-                this.total();
-            }
-        }
-        return added;
-    }
-
     storage() {
         return { version: this.version, _items: this._items };
     }
 
     remove(productId, _q = 0) {
-        let productIndex = this._items.findIndex(element => element.id === productId);
-        if (productIndex >= 0) {
-            if (_q = 0 || _q >= this._items[productIndex].q) {
-                this._items.splice(productIndex, 1);
-            } else {
-                this._items[productIndex].q -= _q;
+        return new Promise((resolve, reject) => {
+            let removed = false;
+            let productIndex = this._items.findIndex(element => element.id === productId);
+            if (productIndex >= 0) {
+                if (_q === 0 || _q >= this._items[productIndex].q) {
+                    this._items.splice(productIndex, 1);
+                    this.render();
+                } else {
+                    this._items[productIndex].q = this._items[productIndex].q - _q;
+                    this._items[productIndex].render(true);
+                }
+                removed = true;
             }
-        }
-        this.total();
+            this.total();
+            if (removed) {
+                resolve();
+            } else {
+                reject();
+            }
+        });
+
     }
 
     clear() {
         this._items = [];
         this._cartSum = 0;
+        let cartSection = document.querySelector('.cart');
+        cartSection.innerHTML = '';
         localStorage.setItem('cart', JSON.stringify(this._items));
     };
 
@@ -211,6 +206,7 @@ class Cart {
 
     render() {
         let divCart = document.getElementsByClassName(this.className)[0];
+        divCart.innerHTML = '';
         this._items.forEach(function(item, index, array) {
             divCart.append(item.render());
         });
@@ -257,7 +253,7 @@ class MenuItem extends Container {
         }
         if (this.id) {
             li.id = this.id;
-            a.id = "a" + this.id;
+            a.id = `a${this.id}`;
         }
         a.textContent = this.label;
         if (this.handler) {
@@ -295,14 +291,14 @@ class Product extends Container {
         productItemSpec.append(h3);
         let span = document.createElement('span');
         span.classList.add("product-item-spec-price");
-        span.innerHTML = this.currency + " " + this.price;
+        span.innerHTML = `${this.currency} ${this.price}`;
         productItemSpec.append(span);
         let a = document.createElement('a');
         a.href = "#";
-        a.id = "buybutton-" + this.id;
+        a.id = `buybutton-${this.id}`;
         a.classList.add("product-item-spec-button");
         a.textContent = "В корзину";
-        a.addEventListener("click", buttonBuyHandler);
+        a.addEventListener("click", cartChangeHandler);
         productItemSpec.append(a);
         productItem.append(productItemSpec);
         return productItem;
@@ -327,34 +323,58 @@ class CartProduct extends Product {
 
     set q(_q) {
         this._q = _q;
-        this._sum = +(_q * product.price).toFixed(2);
+        this._sum = +(_q * this.price).toFixed(2);
     }
 
-    render() {
-        let div = document.createElement('div');
-        div.classList.add(this.className);
+    render(existedOnly = false) {
+        let _elId = `cartProduct-${this.id}`;
+        let div = document.getElementById(_elId);
+        if (!div) {
+            if (existedOnly) {
+                return;
+            }
+            div = document.createElement('div');
+            div.id = _elId;
+            div.classList.add(this.className);
+        } else {
+            div.innerHTML = '';
+        }
         let spanName = document.createElement('span');
         spanName.textContent = this.title;
+        let button_minus = document.createElement('a');
+        button_minus.textContent = '-';
+        button_minus.className = 'cart-item-button';
+        button_minus.id = `remove-${this.id}`;
+        button_minus.addEventListener("click", cartChangeHandler);
+        let button_plus = document.createElement('a');
+        button_plus.textContent = '+';
+        button_plus.className = 'cart-item-button';
+        button_plus.id = `buybutton-${this.id}`;
+        button_plus.addEventListener("click", cartChangeHandler);
+        let button_drop = document.createElement('a');
+        button_drop.textContent = 'X';
+        button_drop.className = 'cart-item-button';
+        button_drop.id = `dropbutton-${this.id}`;
+        button_drop.addEventListener("click", cartChangeHandler);
         let spanQ = document.createElement('span');
-        spanQ.textContent = ": " + this._q;
+        spanQ.textContent = this._q;
         let spanDecoration = document.createElement('span');
-        spanDecoration.textContent = ' x ';
+        spanDecoration.textContent = 'x';
         let spanPrice = document.createElement('span');
         spanPrice.textContent = this.price;
         let spanDecoration2 = document.createElement('span');
-        spanDecoration2.textContent = ' = ';
+        spanDecoration2.textContent = '=';
         let spanSum = document.createElement('span');
-        spanSum.textContent = this.sum;
-        let spanDecoration3 = document.createElement('span');
-        spanDecoration3.textContent = " " + this.currency;
-
+        spanSum.textContent = `${this.sum} ${this.currency}`;
         div.append(spanName);
+        div.append(button_minus);
         div.append(spanQ);
+        div.append(button_plus);
         div.append(spanDecoration);
         div.append(spanPrice);
         div.append(spanDecoration2);
         div.append(spanSum);
-        div.append(spanDecoration3);
+        div.append(button_drop);
 
         return div;
     }
