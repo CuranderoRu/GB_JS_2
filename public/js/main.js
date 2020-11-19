@@ -161,7 +161,7 @@ function cartManagementClickHandler(e) {
         for (let i = 0; i < mainSections.length; i++) {
             mainSections[i].classList.toggle('invisible');
         }
-        document.querySelector('.cart').classList.remove('invisible');
+        document.querySelector('.cart').classList.toggle('invisible');
         app.cart.render();
     }
 }
