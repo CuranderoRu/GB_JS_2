@@ -140,6 +140,7 @@ function cartManagementClickHandler(e) {
         for (let i = 0; i < mainSections.length; i++) {
             mainSections[i].innerHTML = "";
         }
+        document.getElementsByClassName('cart')[0].innerHTML = "";
         app.cart.render();
     }
 }
