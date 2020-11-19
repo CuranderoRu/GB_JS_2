@@ -5,7 +5,7 @@
             "title": "Arduino Uno",
             "currency": "₽",
             "price": 499.75,
-            "category": "Arduino"
+            "category": "controllers/arduino"
         },
         {
             "id": "000002",
@@ -13,7 +13,7 @@
             "title": "Arduino Nano",
             "currency": "₽",
             "price": 399.96,
-            "category": "Arduino"
+            "category": "controllers/arduino"
         },
         {
             "id": "000003",
@@ -21,7 +21,7 @@
             "title": "ESP32",
             "currency": "₽",
             "price": 599.93,
-            "category": "ESP"
+            "category": "controllers/esp"
         },
         {
             "id": "000004",
@@ -29,7 +29,7 @@
             "title": "ESP8266 NodeMCU v3",
             "currency": "₽",
             "price": 299.97,
-            "category": "ESP"
+            "category": "controllers/esp"
         },
         {
             "id": "000005",
@@ -37,7 +37,7 @@
             "title": "Raspberry Pi 3b",
             "currency": "₽",
             "price": 2836.24,
-            "category": "Raspberry"
+            "category": "controllers/raspberry"
         },
         {
             "id": "000006",
@@ -45,7 +45,7 @@
             "title": "Raspberry Pi zero",
             "currency": "₽",
             "price": 1715.44,
-            "category": "Raspberry"
+            "category": "controllers/raspberry"
         },
         {
             "id": "000007",
@@ -53,7 +53,7 @@
             "title": "STM 32",
             "currency": "₽",
             "price": 815.26,
-            "category": "STM"
+            "category": "controllers/stm"
         }
     ]
 }

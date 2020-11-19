@@ -37,14 +37,22 @@ class App {
     getPriceById(productId) {
         return this.productsArray.filter(elem => elem.id === productId)[0].price;
     };
-    fillProducts(sectionId) {
+    fillProducts(sectionId, category = null) {
         let arr;
+        let div = document.getElementById(sectionId);
         if(sectionId==='latestList'){
-            arr = this.getLatestProductsArray();
+            const label = document.getElementById('mainListHeader');
+            if(category){
+                arr = this.getProductsByCategory(category);
+                label.textContent = category;
+            }else{
+                label.textContent = 'Latest Products';
+                arr = this.getLatestProductsArray();
+            }
         }else {
             arr = this.getPopularProductsArray();
         }
-        let div = document.getElementById(sectionId);
+        div.innerHTML = '';
         for (let i = 0; i < arr.length; i++) {
             div.append(new Product(arr[i].id, "product-item", this.smallImagePath + arr[i].imgsrc, arr[i].title, arr[i].currency, arr[i].price).render());
         }
@@ -55,8 +63,11 @@ class App {
     getPopularProductsArray() {
         return this.productsArray.filter((element, index) => index > 2 && index < 6);
     };
+    getProductsByCategory(category) {
+        return this.productsArray.find(element => element.category === category);
+    };
     getProductById(productId) {
-        return this.productsArray.find(element => element.id = productId);
+        return this.productsArray.find(element => element.id === productId);
     };
 
     fetchProducts() {
@@ -72,7 +83,10 @@ class App {
                 console.warn('Check your network connection', err);
             });
     }
-
+    menuSelectionHandler(e){
+        e.preventDefault();
+        console.log(e.target.href);
+    }
 }
 
 class Container {
@@ -267,6 +281,7 @@ class MenuItem extends Container {
         this.submenu = _submenu;
         this.handler = _handler;
     }
+
     render() {
         let li = document.createElement('li');
         if (this.className) {

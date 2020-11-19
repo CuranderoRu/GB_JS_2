@@ -62,43 +62,43 @@ function cartChangeHandler(e) {
 
 function getMenuArr() {
     return [{
-            href: "#",
+            href: "controllers",
             label: "Controllers",
             submenu: [{
-                    href: "#",
+                    href: "controllers/esp",
                     label: "ESP",
                     category: "ESP",
                 },
                 {
-                    href: "#",
+                    href: "controllers/arduino",
                     label: "Arduino",
                     category: "Arduino",
                 },
                 {
-                    href: "#",
+                    href: "controllers/raspberry",
                     label: "Raspberry",
                     category: "Raspberry",
                 },
                 {
-                    href: "#",
+                    href: "controllers/stm",
                     label: "STM",
                     category: "STM",
                 },
             ],
         },
         {
-            href: "#",
+            href: "periferals",
             label: "Periferals",
             submenu: [{
-                    href: "#",
+                    href: "periferals/thermosensors",
                     label: "Thermosensors",
                 },
                 {
-                    href: "#",
+                    href: "periferals/air-quality",
                     label: "Air quality",
                 },
                 {
-                    href: "#",
+                    href: "periferals/relay",
                     label: "Relay",
                 },
             ],
@@ -128,7 +128,7 @@ function createMenu() {
             let submenuArr = [];
             for (let j = 0; j < menuArr[i].submenu.length; j++) {
                 submenuArr.push({
-                    item: new MenuItem("menuCategory" + menuArr[i].submenu[j].category, menuArr[i].submenu[j].href, "page-header-nav-item-submenu-item", "page-header-nav-item-link", menuArr[i].submenu[j].label)
+                    item: new MenuItem("menuCategory" + menuArr[i].submenu[j].category, menuArr[i].submenu[j].href, "page-header-nav-item-submenu-item", "page-header-nav-item-link", menuArr[i].submenu[j].label, undefined, app.menuSelectionHandler)
                 });
             }
             submenu = new Menu("nav-menu-submenu-" + i, "page-header-nav-item-submenu", submenuArr);
