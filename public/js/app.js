@@ -2,7 +2,7 @@
 
 class Route {
     constructor(href) {
-
+        this.path = href.replace(document.location.origin + '/', '');
     }
 }
 
@@ -56,6 +56,7 @@ class App {
             if (category) {
                 arr = this.getProductsByCategory(category);
                 label.textContent = category;
+                div.innerHTML = '';
             } else {
                 label.textContent = 'Latest Products';
                 arr = this.getLatestProductsArray();
@@ -63,7 +64,7 @@ class App {
         } else {
             arr = this.getPopularProductsArray();
         }
-        // div.innerHTML = '';
+
         for (let i = 0; i < arr.length; i++) {
             div.append(arr[i].render());
         }
@@ -86,7 +87,7 @@ class App {
         return res;
     };
     getProductsByCategory(category) {
-        return this.productsArray.find(element => element.category === category);
+        return this.productsArray.filter(element => element.category.indexOf(category) >= 0);
     };
     getProductById(productId) {
         return this.productsArray.find(element => element.id === productId);
@@ -105,10 +106,10 @@ class App {
                 console.warn('Check your network connection', err);
             });
     }
-    menuSelectionHandler(e) {
+    handleEvent(e) {
         e.preventDefault();
         const route = new Route(e.target.href);
-        console.log(e.target.href);
+        this.fillProducts('latestList', route.path);
     }
 
     getMenuArr() {
@@ -177,12 +178,12 @@ class App {
             if ("submenu" in element && element.submenu instanceof Array && element.submenu.length > 0) {
                 let submenuArr = element.submenu.map(sub => {
                     return {
-                        item: new MenuItem("menuCategory" + sub.category, sub.href, "page-header-nav-item-submenu-item", "page-header-nav-item-link", sub.label, undefined, app.menuSelectionHandler)
+                        item: new MenuItem("menuCategory" + sub.category, sub.href, "page-header-nav-item-submenu-item", "page-header-nav-item-link", sub.label, undefined, this)
                     };
                 });
                 submenu = new Menu("nav-menu-submenu-" + i, "page-header-nav-item-submenu", submenuArr);
             }
-            element.item = new MenuItem(null, element.href, "page-header-nav-item", "page-header-nav-item-link", element.label, submenu);
+            element.item = new MenuItem(null, element.href, "page-header-nav-item", "page-header-nav-item-link", element.label, submenu, this);
         });
         return new Menu("nav-menu", "page-header-nav-menu", menuArr);
     }

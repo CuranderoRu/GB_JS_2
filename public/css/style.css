@@ -83,6 +83,7 @@ body {
 .product-item {
   width: 300px;
   text-align: center;
+  margin: 20px auto;
   border: 2px solid #F5F5F5;
   background: #f7f7f7;
   font-family: "OpenSans-Semibold";
@@ -513,6 +514,8 @@ body {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
   margin-top: 30px;
   -ms-flex-pack: distribute;
       justify-content: space-around;
