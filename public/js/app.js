@@ -20,7 +20,11 @@ class App {
         // productsArray = this.fetchProducts();
         let prom = this.fetchProducts();
         prom
-            .then(() => {
+            .then(dataArray => {
+                this.productsArray = dataArray.map(cur => {
+                    // return new Product(cur.id, this.smallImagePath + cur.imgsrc, cur.title, cur.currency, cur.price);
+                    return new Product(cur, this.smallImagePath + cur.imgsrc);
+                })
                 this.cart.productsArray = this.productsArray;
                 this.fillProducts("latestList");
                 this.fillProducts("popularList");
@@ -40,21 +44,21 @@ class App {
     fillProducts(sectionId, category = null) {
         let arr;
         let div = document.getElementById(sectionId);
-        if(sectionId==='latestList'){
+        if (sectionId === 'latestList') {
             const label = document.getElementById('mainListHeader');
-            if(category){
+            if (category) {
                 arr = this.getProductsByCategory(category);
                 label.textContent = category;
-            }else{
+            } else {
                 label.textContent = 'Latest Products';
                 arr = this.getLatestProductsArray();
             }
-        }else {
+        } else {
             arr = this.getPopularProductsArray();
         }
-        div.innerHTML = '';
+        // div.innerHTML = '';
         for (let i = 0; i < arr.length; i++) {
-            div.append(new Product(arr[i].id, "product-item", this.smallImagePath + arr[i].imgsrc, arr[i].title, arr[i].currency, arr[i].price).render());
+            div.append(arr[i].render());
         }
     };
     getLatestProductsArray() {
@@ -77,13 +81,13 @@ class App {
                 return res.json();
             })
             .then(data => {
-                this.productsArray = data.data;
+                return data.data;
             })
             .catch(err => {
                 console.warn('Check your network connection', err);
             });
     }
-    menuSelectionHandler(e){
+    menuSelectionHandler(e) {
         e.preventDefault();
         console.log(e.target.href);
     }
@@ -152,7 +156,7 @@ class Cart {
         });
     }
 
-    init(){
+    init() {
         if (!document.getElementById("cartManagementMenu")) {
             let btn = document.getElementsByClassName("page-header-cart")[0];
             let menu = new Menu("cartManagementMenu", "page-header-cart-actions", [
@@ -309,12 +313,18 @@ class MenuItem extends Container {
 }
 
 class Product extends Container {
-    constructor(_id, _class, _imgsrc, _title, _currency, _price) {
-        super(_id, _class);
-        this.imgsrc = _imgsrc;
-        this.title = _title;
-        this.currency = _currency;
-        this.price = _price;
+    constructor({ id, title, currency, price, category, imgsrc }, _imgsrc = '', _className = 'product-item') {
+        super(id, _className);
+        if (_imgsrc) {
+            this.imgsrc = _imgsrc;
+        } else {
+            this.imgsrc = imgsrc;
+        }
+
+        this.title = title;
+        this.currency = currency;
+        this.price = price;
+        this.category = category;
     }
     render() {
         let productItem = document.createElement('div');
@@ -349,7 +359,7 @@ class Product extends Container {
 class CartProduct extends Product {
     _q = 0;
     constructor(product, _q) {
-        super(product.id, "cart-item", product.imgsrc, product.title, product.currency, product.price);
+        super(product, '', 'cart-item');
         this._q = _q;
         this._sum = +(_q * product.price).toFixed(2);
     }

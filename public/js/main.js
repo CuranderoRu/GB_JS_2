@@ -121,7 +121,6 @@ function getMenuArr() {
 
 function createMenu() {
     let menuArr = getMenuArr();
-    let menuItem;
     for (let i = 0; i < menuArr.length; i++) {
         let submenu;
         if ("submenu" in menuArr[i] && menuArr[i].submenu instanceof Array && menuArr[i].submenu.length > 0) {
@@ -156,20 +155,20 @@ function cartManagementClickHandler(e) {
     }
 }
 
-function reloadPage(e) {
-    let mainSections = document.getElementsByClassName('main-section');
-    for (let i = 0; i < mainSections.length; i++) {
-        mainSections[i].classList.remove('invisible');
-    }
-    let cart = document.querySelector('.cart');
-    cart.classList.add('invisible');
-}
+// function reloadPage(e) {
+//     let mainSections = document.getElementsByClassName('main-section');
+//     for (let i = 0; i < mainSections.length; i++) {
+//         mainSections[i].classList.remove('invisible');
+//     }
+//     let cart = document.querySelector('.cart');
+//     cart.classList.add('invisible');
+// }
 
 function init() {
     app = new App(appParams);
     createMenu();
     recalcCostLabel();
     let logo = document.querySelector('.page-header-logo');
-    logo.addEventListener('click', reloadPage);
+    // logo.addEventListener('click', reloadPage);
 
 }
