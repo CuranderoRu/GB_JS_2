@@ -1,4 +1,11 @@
 'use strict';
+
+class Route {
+    constructor(href) {
+
+    }
+}
+
 class App {
     productsArray = [];
     cart = new Cart();
@@ -17,13 +24,13 @@ class App {
         }
         this.smallImagePath = _params.smallImagePath;
         this.bigImagePath = _params.bigImagePath;
+        this.pageIndex = 0;
         // productsArray = this.fetchProducts();
         let prom = this.fetchProducts();
         prom
             .then(dataArray => {
                 this.productsArray = dataArray.map(cur => {
-                    // return new Product(cur.id, this.smallImagePath + cur.imgsrc, cur.title, cur.currency, cur.price);
-                    return new Product(cur, this.smallImagePath + cur.imgsrc);
+                    return new Product(cur, this.smallImagePath + cur.imgsrc, 'product-item', this.cart);
                 })
                 this.cart.productsArray = this.productsArray;
                 this.fillProducts("latestList");
@@ -36,7 +43,7 @@ class App {
     }
 
     initLocalStorage() {
-        localStorage.setItem('cart', JSON.stringify(this.cart.storage()));
+        localStorage.setItem('cart', JSON.stringify(this.cart.getStorageData()));
     }
     getPriceById(productId) {
         return this.productsArray.filter(elem => elem.id === productId)[0].price;
@@ -45,7 +52,7 @@ class App {
         let arr;
         let div = document.getElementById(sectionId);
         if (sectionId === 'latestList') {
-            const label = document.getElementById('mainListHeader');
+            let label = document.getElementById('mainListHeader');
             if (category) {
                 arr = this.getProductsByCategory(category);
                 label.textContent = category;
@@ -65,7 +72,18 @@ class App {
         return this.productsArray.filter((element, index) => index < 3);
     };
     getPopularProductsArray() {
-        return this.productsArray.filter((element, index) => index > 2 && index < 6);
+        let res = [];
+        let inputArr = [].concat([], this.productsArray);
+        inputArr.sort((a, b) => {
+            return b.popularity - a.popularity;
+        });
+        inputArr.reduce((res, cur) => {
+            if (res.length <= 2 && cur.popularity > 0) {
+                res.push(cur);
+            }
+            return res;
+        }, res);
+        return res;
     };
     getProductsByCategory(category) {
         return this.productsArray.find(element => element.category === category);
@@ -75,7 +93,7 @@ class App {
     };
 
     fetchProducts() {
-        const result = fetch('/js/database.json');
+        const result = fetch(`/js/database${this.pageIndex}.json`);
         return result
             .then(res => {
                 return res.json();
@@ -89,8 +107,87 @@ class App {
     }
     menuSelectionHandler(e) {
         e.preventDefault();
+        const route = new Route(e.target.href);
         console.log(e.target.href);
     }
+
+    getMenuArr() {
+        return [{
+                href: "controllers",
+                label: "Controllers",
+                submenu: [{
+                        href: "controllers/esp",
+                        label: "ESP",
+                        category: "ESP",
+                    },
+                    {
+                        href: "controllers/arduino",
+                        label: "Arduino",
+                        category: "Arduino",
+                    },
+                    {
+                        href: "controllers/raspberry",
+                        label: "Raspberry",
+                        category: "Raspberry",
+                    },
+                    {
+                        href: "controllers/stm",
+                        label: "STM",
+                        category: "STM",
+                    },
+                ],
+            },
+            {
+                href: "periferals",
+                label: "Periferals",
+                submenu: [{
+                        href: "periferals/thermosensors",
+                        label: "Thermosensors",
+                    },
+                    {
+                        href: "periferals/air-quality",
+                        label: "Air quality",
+                    },
+                    {
+                        href: "periferals/relay",
+                        label: "Relay",
+                    },
+                ],
+
+            },
+            {
+                href: "#",
+                label: "About",
+            },
+            {
+                href: "#",
+                label: "Blog",
+            },
+            {
+                href: "#",
+                label: "Support",
+            },
+        ];
+    }
+
+    buildMenu() {
+        let menuArr = this.getMenuArr();
+        menuArr.forEach(element => {
+            let submenu;
+            if ("submenu" in element && element.submenu instanceof Array && element.submenu.length > 0) {
+                let submenuArr = element.submenu.map(sub => {
+                    return {
+                        item: new MenuItem("menuCategory" + sub.category, sub.href, "page-header-nav-item-submenu-item", "page-header-nav-item-link", sub.label, undefined, app.menuSelectionHandler)
+                    };
+                });
+                submenu = new Menu("nav-menu-submenu-" + i, "page-header-nav-item-submenu", submenuArr);
+            }
+            element.item = new MenuItem(null, element.href, "page-header-nav-item", "page-header-nav-item-link", element.label, submenu);
+        });
+        return new Menu("nav-menu", "page-header-nav-menu", menuArr);
+    }
+
+
 }
 
 class Container {
@@ -142,7 +239,7 @@ class Cart {
         }
         this._items = [];
         _items.forEach(function(item, index, array) {
-            this._items.push(new CartProduct(item, item._q))
+            this._items.push(new CartProduct(item, item._q, this))
         });
     }
 
@@ -152,7 +249,7 @@ class Cart {
         }
         this._items = [];
         _items.forEach(function(item, index, array) {
-            this._items.push(new CartProduct(item, item._q))
+            this._items.push(new CartProduct(item, item._q, this))
         });
     }
 
@@ -179,14 +276,13 @@ class Cart {
             }
             if (!added) {
                 let product = this.getProductById(productId);
-                console.log();
                 if (product !== undefined) {
-                    this._items.push(new CartProduct(product, 1));
+                    this._items.push(new CartProduct(product, 1, this));
                     added = true;
-                    localStorage.setItem('cart', JSON.stringify(this.storage()));
-                    this.total();
+                    localStorage.setItem('cart', JSON.stringify(this.getStorageData()));
                 }
             }
+            this.total();
             if (added) {
                 resolve();
             } else {
@@ -196,8 +292,17 @@ class Cart {
 
     }
 
-    storage() {
-        return { version: this.version, _items: this._items };
+    getStorageData() {
+        let storageItems = this._items.map(item => {
+            return {
+                id: item.id,
+                _q: item._q
+            };
+        });
+        return {
+            version: this._version,
+            _items: storageItems
+        };
     }
 
     remove(productId, _q = 0) {
@@ -229,7 +334,7 @@ class Cart {
         this._cartSum = 0;
         let cartSection = document.querySelector('.cart');
         cartSection.innerHTML = '';
-        localStorage.setItem('cart', JSON.stringify(this._items));
+        localStorage.setItem('cart', JSON.stringify(this.getStorageData()));
     };
 
     total() {
@@ -247,6 +352,49 @@ class Cart {
     getProductById(productId) {
         return this._productsArray.find(element => element.id === productId);
     };
+
+    recalcCostLabel() {
+        let cartCostLabel = document.getElementById("cart-cost");
+        cartCostLabel.innerHTML = "&#8381; " + this._cartSum;
+    }
+
+    //cartChangeHandler(e) {
+    handleEvent(e) {
+        e.preventDefault();
+        let eIdArray = e.target.id.split('-');
+        switch (eIdArray[0]) {
+            case 'buybutton':
+                this.add(eIdArray[1])
+                    .then(() => {
+                        this.recalcCostLabel();
+                    })
+                    .catch(() => {
+                        console.log('Could not add good to cart')
+                    });
+                break;
+            case 'remove':
+                this.remove(eIdArray[1], 1)
+                    .then(() => {
+                        this.recalcCostLabel();
+                    })
+                    .catch(() => {
+                        console.log('Could not remove good from cart')
+                    });
+
+                break;
+            case 'dropbutton':
+                this.remove(eIdArray[1])
+                    .then(() => {
+                        this.recalcCostLabel();
+                    })
+                    .catch(() => {
+                        console.log('Could not remove good from cart')
+                    });
+                break;
+            default:
+                console.log('Unsupported call ', eIdArray[0]);
+        }
+    }
 
     render() {
         let divCart = document.getElementsByClassName(this.className)[0];
@@ -313,18 +461,19 @@ class MenuItem extends Container {
 }
 
 class Product extends Container {
-    constructor({ id, title, currency, price, category, imgsrc }, _imgsrc = '', _className = 'product-item') {
+    constructor({ id, title, currency, price, category, imgsrc, popularity }, _imgsrc = '', _className = 'product-item', cart) {
         super(id, _className);
         if (_imgsrc) {
             this.imgsrc = _imgsrc;
         } else {
             this.imgsrc = imgsrc;
         }
-
         this.title = title;
         this.currency = currency;
         this.price = price;
         this.category = category;
+        this.popularity = popularity;
+        this.cart = cart;
     }
     render() {
         let productItem = document.createElement('div');
@@ -349,7 +498,7 @@ class Product extends Container {
         a.id = `buybutton-${this.id}`;
         a.classList.add("product-item-spec-button");
         a.textContent = "В корзину";
-        a.addEventListener("click", cartChangeHandler);
+        a.addEventListener("click", this.cart);
         productItemSpec.append(a);
         productItem.append(productItemSpec);
         return productItem;
@@ -358,8 +507,8 @@ class Product extends Container {
 
 class CartProduct extends Product {
     _q = 0;
-    constructor(product, _q) {
-        super(product, '', 'cart-item');
+    constructor(product, _q, cart) {
+        super(product, '', 'cart-item', cart);
         this._q = _q;
         this._sum = +(_q * product.price).toFixed(2);
     }
@@ -396,17 +545,17 @@ class CartProduct extends Product {
         button_minus.textContent = '-';
         button_minus.className = 'cart-item-button';
         button_minus.id = `remove-${this.id}`;
-        button_minus.addEventListener("click", cartChangeHandler);
+        button_minus.addEventListener("click", this.cart);
         let button_plus = document.createElement('a');
         button_plus.textContent = '+';
         button_plus.className = 'cart-item-button';
         button_plus.id = `buybutton-${this.id}`;
-        button_plus.addEventListener("click", cartChangeHandler);
+        button_plus.addEventListener("click", this.cart);
         let button_drop = document.createElement('a');
         button_drop.textContent = 'X';
         button_drop.className = 'cart-item-button';
         button_drop.id = `dropbutton-${this.id}`;
-        button_drop.addEventListener("click", cartChangeHandler);
+        button_drop.addEventListener("click", this.cart);
         let spanQ = document.createElement('span');
         spanQ.textContent = this._q;
         let spanDecoration = document.createElement('span');

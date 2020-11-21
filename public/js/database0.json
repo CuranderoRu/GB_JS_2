@@ -5,7 +5,8 @@
             "title": "Arduino Uno",
             "currency": "₽",
             "price": 499.75,
-            "category": "controllers/arduino"
+            "category": "controllers/arduino",
+            "popularity": 0
         },
         {
             "id": "000002",
@@ -13,7 +14,8 @@
             "title": "Arduino Nano",
             "currency": "₽",
             "price": 399.96,
-            "category": "controllers/arduino"
+            "category": "controllers/arduino",
+            "popularity": 1
         },
         {
             "id": "000003",
@@ -21,7 +23,8 @@
             "title": "ESP32",
             "currency": "₽",
             "price": 599.93,
-            "category": "controllers/esp"
+            "category": "controllers/esp",
+            "popularity": 0
         },
         {
             "id": "000004",
@@ -29,15 +32,17 @@
             "title": "ESP8266 NodeMCU v3",
             "currency": "₽",
             "price": 299.97,
-            "category": "controllers/esp"
+            "category": "controllers/esp",
+            "popularity": 2
         },
         {
             "id": "000005",
             "imgsrc": "raspberry_pi_3_b.png",
-            "title": "Raspberry Pi 3b",
+            "title": "Raspberry Pi 3b+",
             "currency": "₽",
             "price": 2836.24,
-            "category": "controllers/raspberry"
+            "category": "controllers/raspberry",
+            "popularity": 2
         },
         {
             "id": "000006",
@@ -45,7 +50,8 @@
             "title": "Raspberry Pi zero",
             "currency": "₽",
             "price": 1715.44,
-            "category": "controllers/raspberry"
+            "category": "controllers/raspberry",
+            "popularity": 1
         },
         {
             "id": "000007",
@@ -53,7 +59,8 @@
             "title": "STM 32",
             "currency": "₽",
             "price": 815.26,
-            "category": "controllers/stm"
+            "category": "controllers/stm",
+            "popularity": 0
         }
     ]
 }
