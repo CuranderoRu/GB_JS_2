@@ -1,7 +1,7 @@
 'use strict';
 
 class Route {
-    constructor(href) {
+    constructor(href = '') {
         this.path = href.replace(document.location.origin + '/', '');
     }
 }
@@ -258,10 +258,11 @@ class Cart {
         if (!document.getElementById("cartManagementMenu")) {
             let btn = document.getElementsByClassName("page-header-cart")[0];
             let menu = new Menu("cartManagementMenu", "page-header-cart-actions", [
-                { item: new MenuItem("viewCartItems", "#", null, "page-header-nav-item-link", "View items", null, cartManagementClickHandler) },
-                { item: new MenuItem("clearCart", "#", null, "page-header-nav-item-link", "Clear cart", null, cartManagementClickHandler) },
+                { item: new MenuItem("viewCartItems", "#", null, "page-header-nav-item-link", "View items", null, this) },
+                { item: new MenuItem("clearCart", "#", null, "page-header-nav-item-link", "Clear cart", null, this) },
             ]);
             btn.append(menu.render());
+            this.recalcCostLabel();
         }
     }
 
@@ -284,6 +285,7 @@ class Cart {
                 }
             }
             this.total();
+            this.init();
             if (added) {
                 resolve();
             } else {
@@ -359,9 +361,23 @@ class Cart {
         cartCostLabel.innerHTML = "&#8381; " + this._cartSum;
     }
 
-    //cartChangeHandler(e) {
     handleEvent(e) {
         e.preventDefault();
+        if (e.target.id === "aclearCart") {
+            this.clear();
+            document.getElementById("cartManagementMenu").remove();
+            this.recalcCostLabel();
+            return;
+        } else if (e.target.id === "aviewCartItems") {
+            let mainSections = document.getElementsByClassName('main-section');
+            for (let i = 0; i < mainSections.length; i++) {
+                mainSections[i].classList.toggle('invisible');
+            }
+            document.querySelector('.cart').classList.toggle('invisible');
+            this.render();
+            return;
+        }
+
         let eIdArray = e.target.id.split('-');
         switch (eIdArray[0]) {
             case 'buybutton':
