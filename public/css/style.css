@@ -521,6 +521,32 @@ body {
       justify-content: space-around;
 }
 
+.main-section-btn {
+  display: block;
+  min-width: 150px;
+  margin: 0 auto;
+  padding: 10px 0;
+  color: #656363;
+  background: transparent;
+  background-color: #f7f7f7;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 6%;
+  -webkit-transition: .3s ease-in;
+  transition: .3s ease-in;
+}
+
+.main-section-btn:active, .main-section-btn:focus {
+  outline: none;
+  color: #f7f7f7;
+  font-weight: 700;
+  background-color: #f31c1c;
+}
+
+.main-section-btn:hover {
+  background-color: #fc5a5a;
+}
+
 .cart {
   margin: 20px auto;
 }

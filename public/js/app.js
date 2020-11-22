@@ -6,6 +6,39 @@ class Route {
     }
 }
 
+class FormRepresenter {
+    hideContent() {
+        let sections = document.getElementsByClassName('main-section');
+        for (let i = 0; i < sections.length; i++) {
+            sections[i].classList.add('invisible');
+        }
+        sections = document.getElementsByClassName('cart');
+        for (let i = 0; i < sections.length; i++) {
+            sections[i].classList.add('invisible');
+        }
+        sections = document.getElementsByClassName('main-support');
+        for (let i = 0; i < sections.length; i++) {
+            sections[i].classList.add('invisible');
+        }
+    }
+    showProducts() {
+        let sections = document.getElementsByClassName('main-section');
+        for (let i = 0; i < sections.length; i++) {
+            sections[i].classList.remove('invisible');
+        }
+    }
+    showCart() {
+        let section = document.getElementsByClassName('cart')[0];
+        section.classList.remove('invisible');
+        return section;
+    }
+    showSupport() {
+        let section = document.getElementsByClassName('main-support')[0];
+        section.classList.remove('invisible');
+        return section;
+    }
+}
+
 class App {
     productsArray = [];
     cart = new Cart();
@@ -25,6 +58,8 @@ class App {
         this.smallImagePath = _params.smallImagePath;
         this.bigImagePath = _params.bigImagePath;
         this.pageIndex = 0;
+        this.prod_start_pos = 0;
+        this.route = new Route();
         // productsArray = this.fetchProducts();
         let prom = this.fetchProducts();
         prom
@@ -34,6 +69,7 @@ class App {
                 })
                 this.cart.productsArray = this.productsArray;
                 this.fillProducts("latestList");
+                this.prod_start_pos = this.prod_start_pos + 3;
                 this.fillProducts("popularList");
             })
             .catch(() => {
@@ -59,18 +95,24 @@ class App {
                 div.innerHTML = '';
             } else {
                 label.textContent = 'Latest Products';
-                arr = this.getLatestProductsArray();
+                arr = this.getLatestProductsArray(this.prod_start_pos, this.prod_start_pos + 3);
             }
         } else {
             arr = this.getPopularProductsArray();
         }
-
         for (let i = 0; i < arr.length; i++) {
             div.append(arr[i].render());
         }
+        if (sectionId === 'latestList') {
+            let btn = document.getElementById('loadMoreBTN');
+            if (!btn) {
+                btn = new Button('loadMoreBTN', 'Load more', this);
+                div.parentNode.append(btn.render());
+            }
+        }
     };
-    getLatestProductsArray() {
-        return this.productsArray.filter((element, index) => index < 3);
+    getLatestProductsArray(start_pos = 0, end_pos = 3) {
+        return this.productsArray.filter((element, index) => index >= start_pos && index < end_pos);
     };
     getPopularProductsArray() {
         let res = [];
@@ -108,8 +150,40 @@ class App {
     }
     handleEvent(e) {
         e.preventDefault();
-        const route = new Route(e.target.href);
-        this.fillProducts('latestList', route.path);
+        if (e.target.id === 'loadMoreBTN') {
+            if (this.prod_start_pos + 3 > this.productsArray.length) {
+                this.pageIndex = this.pageIndex + 1;
+                let prom = this.fetchProducts();
+                prom
+                    .then(dataArray => {
+                        this.productsArray = this.productsArray.concat(dataArray.map(cur => {
+                            return new Product(cur, this.smallImagePath + cur.imgsrc, 'product-item', this.cart);
+                        }));
+                        this.cart.productsArray = this.productsArray;
+                        this.fillProducts('latestList', this.route.path);
+                        this.prod_start_pos = this.prod_start_pos + 3;
+                    })
+                    .catch(() => {
+                        this.pageIndex = this.pageIndex - 1;
+                    });
+            } else {
+                this.fillProducts('latestList', this.route.path);
+                this.prod_start_pos = this.prod_start_pos + 3;
+            }
+        } else { //menu item clicked
+            this.route = new Route(e.target.href);
+            let formRepresenter = new FormRepresenter();
+            formRepresenter.hideContent();
+            switch (this.route.path) {
+                case 'support':
+                    formRepresenter.showSupport();
+                    break;
+                default:
+                    formRepresenter.showProducts();
+                    this.fillProducts('latestList', this.route.path);
+            }
+
+        }
     }
 
     getMenuArr() {
@@ -165,7 +239,7 @@ class App {
                 label: "Blog",
             },
             {
-                href: "#",
+                href: "support",
                 label: "Support",
             },
         ];
@@ -438,6 +512,22 @@ class Menu extends Container {
             }
         }
         return ul;
+    }
+}
+
+class Button extends Container {
+    constructor(_id, _textContent, _pushHandler) {
+        super(_id, 'main-section-btn');
+        this.textContent = _textContent;
+        this.pushHandler = _pushHandler;
+    }
+    render() {
+        let btn = document.createElement('button');
+        btn.classList.add(this.className);
+        btn.textContent = this.textContent;
+        btn.id = this.id;
+        btn.addEventListener('click', this.pushHandler);
+        return btn;
     }
 }
 
