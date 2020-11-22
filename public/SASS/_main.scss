@@ -80,3 +80,56 @@
         }
     }
 }
+
+.main-support {
+    margin: 30px auto;
+}
+
+.contact-form {
+    display: block;
+    margin: 0 auto;
+    border: 2px solid #ccc;
+    padding: 10px;
+    box-sizing: border-box;
+    width: 400px;
+    span {
+        display: block;
+        margin: 0 auto;
+        text-align: center;
+        font-weight: 800;
+    }
+    label {
+        display: block;
+        margin: 20px;
+        position: relative;
+        min-height: 20px;
+        align-items: center;
+        input {
+            position: absolute;
+            left: 165px;
+            top: -5px;
+            min-height: 25px;
+        }
+    }
+    #input_submit {
+        display: block;
+        margin-top: 10px;
+        min-width: 120px;
+        min-height: 30px;
+        color: #656363;
+        background: transparent;
+        background-color: #f7f7f7;
+        &:active,
+        &:focus {
+            outline: none;
+            font-weight: 700;
+        }
+        &:hover {
+            background-color: #deebde;
+        }
+    }
+}
+
+.incorrect_input {
+    background-color: #fc9292;
+}
