@@ -7,7 +7,8 @@ import Route from './route.js';
 import Cart from './cart.js';
 import FormBuilder from './formbuilder.js';
 
-import './style.css';
+// import './style.css';
+import '../SASS/style.scss'
 
 class App {
     name = "app";
