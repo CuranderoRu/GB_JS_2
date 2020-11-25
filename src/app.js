@@ -7,6 +7,8 @@ import Route from './route.js';
 import Cart from './cart.js';
 import FormBuilder from './formbuilder.js';
 
+import './style.css';
+
 class App {
     name = "app";
     productsArray = [];
