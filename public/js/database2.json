@@ -1,0 +1,66 @@
+{
+    "data": [{
+            "id": "000015",
+            "imgsrc": "PIC18F2550-I-SP-1.jpg",
+            "title": "PIC18F2550-I",
+            "currency": "₽",
+            "price": 126.28,
+            "category": "controllers/pic",
+            "popularity": 0
+        },
+        {
+            "id": "000016",
+            "imgsrc": "EMW3165-Wi-Fi-MCU-Wi-Fi-Lua.jpg",
+            "title": "EMW3165 Wi-Fi MCU Lua.jpg",
+            "currency": "₽",
+            "price": 399.96,
+            "category": "controllers/emw",
+            "popularity": 1
+        },
+        {
+            "id": "000017",
+            "imgsrc": "N32905U1DN-arm926ej-s-freescale.png",
+            "title": "ARM 9 N32905U1DN freescale",
+            "currency": "₽",
+            "price": 528.36,
+            "category": "controllers/freescale",
+            "popularity": 0
+        },
+        {
+            "id": "000018",
+            "imgsrc": "AT91SAM9M10-CU-ATMEL-ARM9.png",
+            "title": "ARM9 AT91SAM9M10-CU ATMEL",
+            "currency": "₽",
+            "price": 463.97,
+            "category": "controllers/atmel",
+            "popularity": 1
+        },
+        {
+            "id": "000019",
+            "imgsrc": "C8051F340-GQR-Silicon_labs.png",
+            "title": "C8051F340-GQR Silicon labs",
+            "currency": "₽",
+            "price": 112.24,
+            "category": "controllers/slabs",
+            "popularity": 2
+        },
+        {
+            "id": "000020",
+            "imgsrc": "C8051F340-devboard-Silicon_labs.png",
+            "title": "C8051F340 DevBoard Silicon labs",
+            "currency": "₽",
+            "price": 815.44,
+            "category": "controllers/slabs",
+            "popularity": 1
+        },
+        {
+            "id": "000021",
+            "imgsrc": "MSP430F169-devboard-ti.png",
+            "title": "MSP430F169 DevBoard Texas Instruments",
+            "currency": "₽",
+            "price": 620.26,
+            "category": "controllers/ti",
+            "popularity": 0
+        }
+    ]
+}

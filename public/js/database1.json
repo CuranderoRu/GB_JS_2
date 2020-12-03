@@ -1,0 +1,66 @@
+{
+    "data": [{
+            "id": "000008",
+            "imgsrc": "AITHINKER_ESP07_ESP8266.jpg",
+            "title": "AI-THINKER ESP-07",
+            "currency": "₽",
+            "price": 126.28,
+            "category": "controllers/esp",
+            "popularity": 0
+        },
+        {
+            "id": "000009",
+            "imgsrc": "EMW3165-Wi-Fi-MCU-Wi-Fi-Lua.jpg",
+            "title": "EMW3165 Wi-Fi MCU Lua.jpg",
+            "currency": "₽",
+            "price": 399.96,
+            "category": "controllers/emw",
+            "popularity": 1
+        },
+        {
+            "id": "000010",
+            "imgsrc": "WEMOS_D1_mini_ESP8266.jpg",
+            "title": "WEMOS D1 mini ESP8266",
+            "currency": "₽",
+            "price": 284.36,
+            "category": "controllers/esp",
+            "popularity": 0
+        },
+        {
+            "id": "000011",
+            "imgsrc": "ESP12F_OLED_0_96.png",
+            "title": "ESP8266 ESP12F OLED",
+            "currency": "₽",
+            "price": 463.97,
+            "category": "controllers/esp",
+            "popularity": 2
+        },
+        {
+            "id": "000012",
+            "imgsrc": "WEMOS_NODEMCU_ESP8266_OLED.jpg",
+            "title": "WEMOS NodeMCU ESP8266 OLED",
+            "currency": "₽",
+            "price": 2836.24,
+            "category": "controllers/esp",
+            "popularity": 2
+        },
+        {
+            "id": "000013",
+            "imgsrc": "ESP32_OLED_KIT.jpg",
+            "title": "ESP32 OLED KIT",
+            "currency": "₽",
+            "price": 815.44,
+            "category": "controllers/esp",
+            "popularity": 1
+        },
+        {
+            "id": "000014",
+            "imgsrc": "ESP32-S_CAM_module.jpg",
+            "title": "ESP32-S CAMERA module",
+            "currency": "₽",
+            "price": 620.26,
+            "category": "controllers/esp",
+            "popularity": 0
+        }
+    ]
+}

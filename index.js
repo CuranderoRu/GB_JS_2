@@ -14,16 +14,12 @@ const server = http.createServer((req, res) => {
     }
     try {
         body = fs.readFileSync('./public' + path);
+        res.end(body);
     } catch (err) {
-        //body = fs.readFileSync('./public/index.html');
-    }
-
-    if (body === undefined) {
         res.statusCode = 404;
         res.end('File not found');
-    } else {
-        res.end(body);
     }
+
 })
 
 const port = process.env.PORT || 3000
