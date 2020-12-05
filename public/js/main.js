@@ -7,8 +7,7 @@ function init() {
     };
 
     let app = new App(appParams);
-    let nav = document.getElementById('nav');
-    nav.append(app.buildMenu().render());
+    app.buildForm();
     let logo = document.querySelector('.page-header-logo');
     logo.addEventListener('click', app);
 }
