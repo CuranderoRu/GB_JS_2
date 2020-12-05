@@ -2,10 +2,12 @@
     "name": "gb_js_2",
     "version": "1.0.0",
     "description": "JS2 study",
-    "main": "index.js",
+    "main": "server.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "node index.js"
+        "start": "node server.js",
+        "build": "webpack",
+        "dev": "webpack serve --hot --config webpack.dev.config.js"
     },
     "repository": {
         "type": "git",
@@ -20,5 +22,21 @@
     "bugs": {
         "url": "https://github.com/CuranderoRu/GB_JS_2/issues"
     },
-    "homepage": "https://github.com/CuranderoRu/GB_JS_2#readme"
+    "homepage": "https://github.com/CuranderoRu/GB_JS_2#readme",
+    "devDependencies": {
+        "sass": "^1.29.0",
+        "sass-loader": "^10.1.0",
+        "webpack": "^5.6.0",
+        "webpack-dev-server": "^3.11.0"
+    },
+    "dependencies": {
+        "@babel/core": "^7.12.8",
+        "@babel/plugin-proposal-class-properties": "^7.12.1",
+        "babel": "^6.23.0",
+        "babel-loader": "^8.2.1",
+        "css-loader": "^5.0.1",
+        "style-loader": "^2.0.0",
+        "webpack-cli": "^4.2.0",
+        "webpack-merge": "^5.4.0"
+    }
 }
